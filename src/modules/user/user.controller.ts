@@ -19,6 +19,23 @@ const registerUser = catchAsync(
   },
 );
 
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+
+    if (!req.user || !req.user.id) {
+    throw new Error("User ID not found in token!");
+  }
+
+  const result = await userService.getProfile(req.user?.id as string);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Profile data fetched successfully",
+    data: {result},
+  });
+});
+
 export const userController = {
   registerUser,
+  getMyProfile,
 };

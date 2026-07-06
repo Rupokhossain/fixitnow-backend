@@ -51,7 +51,7 @@ const loginUser = async (payload: ILoginUser) => {
 };
 
 const refreshToken = async (refreshToken: string) => {
-  const verifiedRefreshToken = jwtUtils.verfiedToken(
+  const verifiedRefreshToken = jwtUtils.verifiedToken(
     refreshToken,
     config.jwt_refresh_secret,
   );

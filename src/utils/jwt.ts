@@ -12,7 +12,7 @@ const createToken = (
   return token;
 };
 
-const verfiedToken = (token: string, secret: string) => {
+const verifiedToken = (token: string, secret: string) => {
   try {
     const verfiedToken = jwt.verify(token, secret);
 
@@ -30,5 +30,5 @@ const verfiedToken = (token: string, secret: string) => {
 
 export const jwtUtils = {
   createToken,
-  verfiedToken
+  verifiedToken
 };
