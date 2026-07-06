@@ -9,10 +9,6 @@ const isUserExist = await prisma.user.findUnique({
   where: { email },
 });
 
-// if (isUserExist) {
-//   throw new Error("User already exists with this email!");
-// }
-
 
 const hashedPassword = await bcrypt.hash(password, 10);
 
