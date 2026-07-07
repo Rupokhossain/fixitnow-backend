@@ -3,11 +3,10 @@ model TechnicianProfile {
     bio        String
     skills     String
     experience String
-    pricing Int
-    
+    pricing    Int
+
     userId String @unique
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
