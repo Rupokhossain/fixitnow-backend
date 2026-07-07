@@ -14,6 +14,14 @@ const createCategory = async (payload: ICategory) => {
     throw new Error("Category already exists");
   }
 
+  if (!name) {
+    throw new Error("Category name is required");
+  }
+
+  if (!description) {
+    throw new Error("Category description is required");
+  }
+
   const result = await prisma.category.create({
     data: {
       name,
