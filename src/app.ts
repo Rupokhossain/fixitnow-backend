@@ -9,6 +9,7 @@ import { technicianRoutes } from "./modules/technician/technician.route";
 import { serviceRoutes } from "./modules/service/service.routes";
 import { bookingRoutes } from "./modules/booking/booking.route";
 import { adminRoutes } from "./modules/admin/admin.route";
+import { paymentRoutes } from "./modules/payment/payment.route";
 
 const app: Application = express();
 
@@ -21,14 +22,12 @@ app.use(
 
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
-
 
 app.use("/api/auth", userRoutes);
 app.use("/api/auth", authRoutes);
@@ -37,9 +36,11 @@ app.use("/api", technicianRoutes);
 app.use("/api", serviceRoutes);
 
 app.use("/api", bookingRoutes);
-app.use("/api", adminRoutes)
+app.use("/api", adminRoutes);
+
+app.use("/api/payments", paymentRoutes);
 
 
-app.use(globalErrorHandler)
+app.use(globalErrorHandler);
 
 export default app;
