@@ -10,6 +10,7 @@ import { serviceRoutes } from "./modules/service/service.routes";
 import { bookingRoutes } from "./modules/booking/booking.route";
 import { adminRoutes } from "./modules/admin/admin.route";
 import { paymentRoutes } from "./modules/payment/payment.route";
+import { paymentController } from "./modules/payment/payment.controller";
 
 const app: Application = express();
 
@@ -20,6 +21,11 @@ app.use(
   }),
 );
 
+app.post(
+  "/api/payments/confirm",
+  express.raw({ type: "application/json" }),
+  paymentController.handleWebhook,
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -39,7 +45,6 @@ app.use("/api", bookingRoutes);
 app.use("/api", adminRoutes);
 
 app.use("/api/payments", paymentRoutes);
-
 
 app.use(globalErrorHandler);
 
