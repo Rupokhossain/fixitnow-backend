@@ -11,6 +11,7 @@ import { bookingRoutes } from "./modules/booking/booking.route";
 import { adminRoutes } from "./modules/admin/admin.route";
 import { paymentRoutes } from "./modules/payment/payment.route";
 import { paymentController } from "./modules/payment/payment.controller";
+import { reviewRoutes } from "./modules/review/review.route";
 
 const app: Application = express();
 
@@ -45,6 +46,8 @@ app.use("/api", bookingRoutes);
 app.use("/api", adminRoutes);
 
 app.use("/api/payments", paymentRoutes);
+app.use("/api/reviews", reviewRoutes);
+
 
 app.use(globalErrorHandler);
 
