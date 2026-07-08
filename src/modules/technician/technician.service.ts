@@ -1,6 +1,6 @@
-import { BookingStatus } from "../../../generated/prisma";
+import { BookingStatus, Prisma } from "../../../generated/prisma";
 import { prisma } from "../../lib/prisma";
-import { ITechnician } from "./technician.interface";
+import { ITechnician, ITechnicianQuery } from "./technician.interface";
 
 const updateProfileIntoDB = async (userId: string, payload: ITechnician) => {
   const { bio, skills, experience, pricing } = payload;
@@ -105,8 +105,102 @@ const updateBookingStatusIntoDB = async (
   return result;
 };
 
+const getAllTechniciansFromDB = async (query: ITechnicianQuery) => {
+  const { searchTerm, location, page, limit } = query;
+
+  const currentPage = Number(page) || 1;
+  const currentLimit = Number(limit) || 10;
+  const skip = (currentPage - 1) * currentLimit;
+
+  const andConditions: Prisma.UserWhereInput[] = [
+    {
+      role: "TECHNICIAN",
+    },
+  ];
+
+  if (searchTerm) {
+    andConditions.push({
+      OR: [
+        { name: { contains: searchTerm, mode: "insensitive" } },
+        { email: { contains: searchTerm, mode: "insensitive" } },
+        {
+          technicianProfile: {
+            skills: { contains: searchTerm, mode: "insensitive" },
+          },
+        },
+      ],
+    });
+  }
+
+  if (location) {
+    andConditions.push({
+      technicianProfile: {
+        location: { contains: location, mode: "insensitive" },
+      },
+    });
+  }
+
+  const whereConditions: Prisma.UserWhereInput = { AND: andConditions };
+
+  const result = await prisma.user.findMany({
+    where: whereConditions,
+    skip,
+    take: currentLimit,
+    include: {
+      technicianProfile: true,
+    },
+    omit: { password: true },
+  });
+
+  const total = await prisma.user.count({
+    where: whereConditions,
+  });
+
+  return {
+    meta: {
+      page: currentPage,
+      limit: currentLimit,
+      total,
+      totalPage: Math.ceil(total / currentLimit),
+    },
+    data: result,
+  };
+};
+
+const getSingleTechnicianFromDB = async (id: string) => {
+  const result = await prisma.user.findFirstOrThrow({
+    where: {
+      id,
+      role: "TECHNICIAN",
+    },
+    include: {
+      technicianProfile: true,
+      services: true,
+      reviewsReceived: {
+        include: {
+          customer: true,
+          service: true,
+        },
+      },
+    },
+    omit: { password: true },
+  });
+  return result;
+};
+
+const updateAvailabilityIntoDB = async (userId: string, availability: string) => {
+  const result = await prisma.technicianProfile.update({
+    where: { userId },
+    data: { availability }
+  });
+  return result;
+};
+
 export const technicianService = {
   updateProfileIntoDB,
   getTechnicianBookingsFromDB,
   updateBookingStatusIntoDB,
+  getAllTechniciansFromDB,
+  getSingleTechnicianFromDB,
+  updateAvailabilityIntoDB
 };

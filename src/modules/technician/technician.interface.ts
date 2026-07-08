@@ -6,3 +6,10 @@ export interface ITechnician {
     experience: string;
     pricing: number
 }
+
+export interface ITechnicianQuery {
+  searchTerm?: string;
+  location?: string;
+  page?: string;
+  limit?: string;
+}

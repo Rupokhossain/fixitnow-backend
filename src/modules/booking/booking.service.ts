@@ -67,7 +67,31 @@ const getCustomerBookingsFromDB = async (userId: string) => {
   return result;
 };
 
+const getSingleBookingFromDB = async (id: string) => {
+  const result = await prisma.booking.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    include: {
+      service: true,
+      customer: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      technician: {
+        select: { name: true, email: true, technicianProfile: true },
+      },
+      payment: true,
+    },
+  });
+
+  return result;
+};
+
 export const bookingService = {
   createBookingIntoDB,
   getCustomerBookingsFromDB,
+  getSingleBookingFromDB,
 };

@@ -1,5 +1,5 @@
 export interface IBookingRequest {
-      serviceId: string;
+  serviceId: string;
   date: string;
   time: string;
 }

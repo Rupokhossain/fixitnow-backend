@@ -18,9 +18,19 @@ router.get(
 );
 
 router.patch(
-  "/technician/bookings/:id", 
-  auth(Role.TECHNICIAN), 
-  technicianController.updateBookingStatus
+  "/technician/bookings/:id",
+  auth(Role.TECHNICIAN),
+  technicianController.updateBookingStatus,
+);
+
+router.get("/technicians", technicianController.getAllTechnicians);
+
+router.get("/technicians/:id", technicianController.getSingleTechnician);
+
+router.put(
+  "/technician/availability",
+  auth(Role.TECHNICIAN),
+  technicianController.updateAvailability,
 );
 
 export const technicianRoutes = router;
