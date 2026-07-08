@@ -1,3 +1,4 @@
+import { BookingStatus } from "../../../generated/prisma";
 import { prisma } from "../../lib/prisma";
 import { ITechnician } from "./technician.interface";
 
@@ -62,7 +63,50 @@ const getTechnicianBookingsFromDB = async (userId: string) => {
   return result;
 };
 
+const updateBookingStatusIntoDB = async (
+  bookingId: string,
+  technicianId: string,
+  status: BookingStatus,
+) => {
+  const booking = await prisma.booking.findFirst({
+    where: {
+      id: bookingId,
+      technicianId: technicianId,
+    },
+  });
+
+  if (!booking) {
+    throw new Error("You are not authorized to update this booking status!");
+  }
+
+  const allowedStatus: BookingStatus[] = [
+    BookingStatus.ACCEPTED,
+    BookingStatus.DECLINED,
+    BookingStatus.IN_PROGRESS,
+    BookingStatus.COMPLETED,
+  ];
+
+  if (!allowedStatus.includes(status)) {
+    throw new Error("Invalid booking status");
+  }
+
+  if (booking.status === BookingStatus.COMPLETED) {
+    throw new Error("Completed booking cannot be updated");
+  }
+
+  const result = await prisma.booking.update({
+    where: {
+      id: bookingId,
+    },
+    data: {
+      status: status,
+    },
+  });
+  return result;
+};
+
 export const technicianService = {
   updateProfileIntoDB,
   getTechnicianBookingsFromDB,
+  updateBookingStatusIntoDB,
 };
