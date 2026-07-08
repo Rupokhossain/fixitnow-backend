@@ -4,6 +4,7 @@ model TechnicianProfile {
     skills     String
     experience String
     pricing    Int
+    location   String?
 
     userId String @unique
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

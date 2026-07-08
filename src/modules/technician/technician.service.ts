@@ -35,6 +35,34 @@ const updateProfileIntoDB = async (userId: string, payload: ITechnician) => {
   return result;
 };
 
+const getTechnicianBookingsFromDB = async (userId: string) => {
+  const result = await prisma.booking.findMany({
+    where: {
+      technicianId: userId,
+    },
+    include: {
+      service: {
+        include: {
+          category: true,
+        },
+      },
+      customer: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      payment: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return result;
+};
+
 export const technicianService = {
   updateProfileIntoDB,
+  getTechnicianBookingsFromDB,
 };
