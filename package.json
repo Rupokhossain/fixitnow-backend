@@ -9,7 +9,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    
+    "build": "tsc && npx prisma generate",
+    "vercel-build": "npx prisma generate && tsc",
+    "postinstall": "prisma generate",
+
     "start": "node dist/server.js",
     "stripe:webhook": "stripe listen --forward-to localhost:8000/api/payments/confirm",
     "test": "echo \"Error: no test specified\" && exit 1"
