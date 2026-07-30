@@ -1,8 +1,51 @@
-import { Status } from "../../../generated/prisma";
+import { title } from "process";
+import { Prisma, Role, Status } from "../../../generated/prisma";
 import { prisma } from "../../lib/prisma";
 
-const getAllUsersFromDB = async () => {
+interface IUserQuery {
+  searchTerm?: string;
+  role?: string;
+  status?: string;
+}
+
+const getAllUsersFromDB = async (query: IUserQuery) => {
+  const andConditions: Prisma.UserWhereInput[] = [];
+
+  if (query.searchTerm) {
+    andConditions.push({
+      OR: [
+        {
+          name: {
+            contains: query.searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          email: {
+            contains: query.searchTerm,
+            mode: "insensitive",
+          },
+        },
+      ],
+    });
+  }
+
+  if (query.role) {
+    andConditions.push({
+      role: query.role as Role,
+    });
+  }
+
+  if (query.status) {
+    andConditions.push({
+      status: query.status as Status,
+    });
+  }
+
   const result = await prisma.user.findMany({
+    where: {
+      AND: andConditions,
+    },
     omit: {
       password: true,
     },
@@ -16,7 +59,15 @@ const getAllUsersFromDB = async () => {
   return result;
 };
 
-const updateUserStatusIntoDB = async (id: string, status: Status) => {
+const updateUserStatusIntoDB = async (
+  id: string,
+  status: Status,
+  currentUserId: string,
+) => {
+  if (id === currentUserId) {
+    throw new Error("You cannot block your own account.");
+  }
+
   const result = await prisma.user.update({
     where: {
       id,
@@ -53,5 +104,5 @@ const getAllBookingsFromDB = async () => {
 export const adminService = {
   getAllUsersFromDB,
   updateUserStatusIntoDB,
-  getAllBookingsFromDB
+  getAllBookingsFromDB,
 };

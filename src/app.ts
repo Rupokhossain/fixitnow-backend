@@ -16,12 +16,12 @@ import { notFound } from "./middleware/notFound";
 
 const app: Application = express();
 
-app.use(
-  cors({
-    origin: "http://localhost:8000",
-    credentials: true,
-  }),
-);
+app.use(cors({
+  origin: "http://localhost:3000", 
+  credentials: true, 
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.post(
   "/api/payments/confirm",

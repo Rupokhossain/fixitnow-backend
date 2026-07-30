@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import { adminService } from "./admin.service";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const result = await adminService.getAllUsersFromDB();
+  const result = await adminService.getAllUsersFromDB(req.query);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -21,6 +21,7 @@ const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
   const result = await adminService.updateUserStatusIntoDB(
     id as string,
     status,
+    req.user?.id as string
   );
 
   sendResponse(res, {
