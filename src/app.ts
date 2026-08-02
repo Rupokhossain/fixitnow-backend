@@ -17,7 +17,7 @@ import { notFound } from "./middleware/notFound";
 const app: Application = express();
 
 app.use(cors({
-  origin: "http://localhost:3000", 
+  origin: ["http://localhost:3000", "https://fixitnow-frontend-lilac.vercel.app/"], 
   credentials: true, 
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
