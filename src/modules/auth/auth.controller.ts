@@ -4,6 +4,8 @@ import { authService } from "./auth.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const loginUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
@@ -12,15 +14,15 @@ const loginUser = catchAsync(
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
@@ -42,11 +44,11 @@ const refreshToken = catchAsync(
 
     const { accessToken } = await authService.refreshToken(refreshToken);
 
-        res.cookie("accessToken", accessToken, {
+    res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60 * 24, // 24 hour or 1 day
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 24,
     });
 
     sendResponse(res, {
@@ -55,7 +57,7 @@ const refreshToken = catchAsync(
       message: "Token Refreshed Successfully",
       data: { accessToken },
     });
-},
+  },
 );
 
 export const authController = {
