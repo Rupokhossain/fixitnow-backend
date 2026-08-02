@@ -103,11 +103,43 @@ const updateAvailability = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyProfile = catchAsync(async (req, res) => {
+  const user = req.user;
+
+  const result = await technicianService.getMyProfileFromDB(
+    user?.id as string
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Profile retrieved successfully",
+    data: result,
+  });
+});
+
+const getAvailability = catchAsync(async (req, res) => {
+  const user = req.user;
+
+  const result = await technicianService.getAvailabilityFromDB(
+    user?.id as string
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Availability retrieved successfully",
+    data: result,
+  });
+});
+
 export const technicianController = {
   updateMyProfile,
   getTechnicianBookings,
   updateBookingStatus,
   getAllTechnicians,
   getSingleTechnician,
-  updateAvailability
+  updateAvailability,
+  getMyProfile,
+  getAvailability
 };

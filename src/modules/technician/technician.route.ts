@@ -33,4 +33,17 @@ router.put(
   technicianController.updateAvailability,
 );
 
+router.get(
+  "/technician/availability",
+  auth(Role.TECHNICIAN),
+  technicianController.getAvailability
+);
+
+router.get(
+  "/technician/profile",
+  auth(Role.TECHNICIAN),
+  technicianController.getMyProfile
+);
+
+
 export const technicianRoutes = router;

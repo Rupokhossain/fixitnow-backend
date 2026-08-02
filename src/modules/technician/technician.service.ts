@@ -196,11 +196,32 @@ const updateAvailabilityIntoDB = async (userId: string, availability: string) =>
   return result;
 };
 
+const getMyProfileFromDB = async (userId: string) => {
+  return await prisma.technicianProfile.findUnique({
+    where: {
+      userId,
+    },
+  });
+};
+
+const getAvailabilityFromDB = async (userId: string) => {
+  return await prisma.technicianProfile.findUnique({
+    where: {
+      userId,
+    },
+    select: {
+      availability: true,
+    },
+  });
+};
+
 export const technicianService = {
   updateProfileIntoDB,
   getTechnicianBookingsFromDB,
   updateBookingStatusIntoDB,
   getAllTechniciansFromDB,
   getSingleTechnicianFromDB,
-  updateAvailabilityIntoDB
+  updateAvailabilityIntoDB,
+  getMyProfileFromDB,
+  getAvailabilityFromDB
 };
