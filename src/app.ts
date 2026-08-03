@@ -24,7 +24,7 @@ app.use(cors({
 }));
 
 app.post(
-  "/api/payments/confirm",
+  "/api/payments/webhook",
   express.raw({ type: "application/json" }),
   paymentController.handleWebhook,
 );
