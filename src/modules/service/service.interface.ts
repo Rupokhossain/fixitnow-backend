@@ -3,6 +3,7 @@ export interface IService {
   description: string;
   price: number;
   categoryId: string;
+  image?: string
 }
 
 

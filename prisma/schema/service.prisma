@@ -3,6 +3,7 @@ model Service {
     name        String
     description String
     price       Float
+    image      String?
 
     // relation between category & user
     technicianId String
