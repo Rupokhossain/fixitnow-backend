@@ -36,8 +36,8 @@ const createCheckoutSession = async (bookingId: string, userId: string) => {
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "payment",
-    success_url: `${config.app_url}/payment?success=true`,
-    cancel_url: `${config.app_url}/payment?success=false`,
+    success_url: `${config.app_url}/payment?success=true&bookingId=${booking.id}`,
+    cancel_url: `${config.app_url}/payment?success=false&bookingId=${booking.id}`,
     metadata: {
       userId: userId,
       bookingId: booking.id,
@@ -61,53 +61,58 @@ const createCheckoutSession = async (bookingId: string, userId: string) => {
   return session.url;
 };
 
-const handleWebhook = async (payload: Buffer, signature: string) => {
-  console.log("Webhook service hit");
+const handleWebhook = async (
+  payload: Buffer,
+  signature: string
+) => {
+  console.log("🔥🔥 WEBHOOK SERVICE HIT");
 
   const event = stripe.webhooks.constructEvent(
     payload,
     signature,
-    config.stripe_webhook_secret as string,
+    config.stripe_webhook_secret as string
   );
 
-  console.log(event.type);
+  console.log("Stripe Event:", event.type);
 
   if (event.type === "checkout.session.completed") {
+    console.log("🔥 checkout.session.completed received");
+
     const session = event.data.object as Stripe.Checkout.Session;
 
-    console.log(session.metadata);
+    console.log("Stripe Metadata:", session.metadata);
 
     await handlePaymentSuccess(session);
+
+    console.log("🔥 Payment success handler completed");
   }
 };
 
 const getAllPaymentsFromDB = async (userId: string, role: string) => {
   let result;
-  
-  if (role === "ADMIN") {
 
+  if (role === "ADMIN") {
     result = await prisma.payment.findMany({
       include: {
         booking: {
-          include: { customer: true, service: true }
-        }
+          include: { customer: true, service: true },
+        },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
   } else {
-   
     result = await prisma.payment.findMany({
       where: {
         booking: {
-          customerId: userId 
-        }
+          customerId: userId,
+        },
       },
       include: {
         booking: {
-          include: { service: true }
-        }
+          include: { service: true },
+        },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
   }
   return result;
@@ -118,9 +123,9 @@ const getSinglePaymentFromDB = async (id: string) => {
     where: { id },
     include: {
       booking: {
-        include: { customer: true, service: true, technician: true }
-      }
-    }
+        include: { customer: true, service: true, technician: true },
+      },
+    },
   });
 };
 
@@ -128,5 +133,5 @@ export const paymentServices = {
   createCheckoutSession,
   handleWebhook,
   getAllPaymentsFromDB,
-  getSinglePaymentFromDB
+  getSinglePaymentFromDB,
 };
