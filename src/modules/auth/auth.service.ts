@@ -19,7 +19,7 @@ const loginUser = async (payload: ILoginUser) => {
     throw new Error("Your account has been blocked. Please Contact Support.");
   }
 
-  const isPasswordMatched = await bcrypt.compare(password, user.password);
+  const isPasswordMatched = await bcrypt.compare(password, user.password as string);
 
   if (!isPasswordMatched) {
     throw new Error("Invalid Password");
