@@ -88,7 +88,34 @@ const refreshToken = async (refreshToken: string) => {
   return { accessToken };
 };
 
+const socialLogin = async (payload: { email: string; name: string; image?: string }) => {
+  let user = await prisma.user.findUnique({
+    where: { email: payload.email },
+  });
+
+ 
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        email: payload.email,
+        name: payload.name,
+        role: "CUSTOMER", 
+      } as any,
+    });
+  }
+
+  const accessToken = jwtUtils.createToken(
+    { id: user.id, role: user.role, email: user.email },
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as SignOptions
+  );
+
+  return { accessToken };
+}; 
+
+
 export const authService = {
   loginUser,
-  refreshToken
+  refreshToken,
+  socialLogin
 };
